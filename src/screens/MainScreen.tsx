@@ -1,7 +1,13 @@
 import React from 'react';
-import { ScreenName, ServerStatus } from '../types';
+import {
+  formatBrl,
+  getSubscriptionState,
+  ScreenName,
+  ServerStatus,
+  UserSubscription,
+} from '../types';
 import { STRINGS } from '../strings';
-import { Toolbar } from '../components/Toolbar';
+import { Toolbar, ToolbarMenuItem } from '../components/Toolbar';
 
 interface MainScreenProps {
   status: ServerStatus;
@@ -10,6 +16,9 @@ interface MainScreenProps {
   errorIp: string;
   errorPort: string;
   busy: boolean;
+  isAdmin: boolean;
+  subscription: UserSubscription | null;
+  nowMs: number;
   onIpInputChange: (val: string) => void;
   onPortInputChange: (val: string) => void;
   onUpdateIp: () => void;
@@ -25,6 +34,9 @@ export const MainScreen: React.FC<MainScreenProps> = ({
   errorIp,
   errorPort,
   busy,
+  isAdmin,
+  subscription,
+  nowMs,
   onIpInputChange,
   onPortInputChange,
   onUpdateIp,
@@ -32,17 +44,47 @@ export const MainScreen: React.FC<MainScreenProps> = ({
   onToggleServer,
   onNavigate,
 }) => {
+  const menuItems: ToolbarMenuItem[] = [
+    { label: STRINGS.howToUse, onClick: () => onNavigate('instructions') },
+    { label: STRINGS.rules, onClick: () => onNavigate('rules') },
+    { label: STRINGS.settings, onClick: () => onNavigate('settings') },
+    { label: 'Minha Conta / Assinatura', onClick: () => onNavigate('account') },
+    ...(isAdmin
+      ? [{ label: 'Gerenciar Usuários e Planos', onClick: () => onNavigate('admin') }]
+      : []),
+    { label: STRINGS.creditsMenu, onClick: () => onNavigate('credits') },
+  ];
+
+  const subState = subscription ? getSubscriptionState(subscription, nowMs) : null;
+
   return (
     <div className="flex min-h-full flex-col bg-[#FAFAFA]">
-      <Toolbar
-        title={STRINGS.appName}
-        menuItems={[
-          { label: STRINGS.howToUse, onClick: () => onNavigate('instructions') },
-          { label: STRINGS.rules, onClick: () => onNavigate('rules') },
-          { label: STRINGS.settings, onClick: () => onNavigate('settings') },
-          { label: STRINGS.creditsMenu, onClick: () => onNavigate('credits') },
-        ]}
-      />
+      <Toolbar title={STRINGS.appName} menuItems={menuItems} />
+
+      <div className="flex items-center justify-between border-b border-neutral-200 bg-white px-3 py-1.5 text-[12px] text-neutral-700">
+        {isAdmin ? (
+          <span>
+            Perfil: <strong className="text-[#008A05]">Administrador</strong>
+          </span>
+        ) : subscription && subState ? (
+          <span>
+            Usuário: <strong>{subscription.username}</strong> •{' '}
+            <strong className={subState.remainingDays <= 3 ? 'text-[#CC0000]' : 'text-[#008A05]'}>
+              {subState.remainingDays} dia(s)
+            </strong>{' '}
+            ({formatBrl(subscription.monthlyPriceBrl)}/mês)
+          </span>
+        ) : (
+          <span>Conta conectada</span>
+        )}
+        <button
+          type="button"
+          onClick={() => onNavigate(isAdmin ? 'admin' : 'account')}
+          className="cursor-pointer font-medium text-[#B80000] hover:underline"
+        >
+          {isAdmin ? 'Admin' : 'Conta'}
+        </button>
+      </div>
 
       <div className="relative flex flex-1 flex-col justify-between px-4 py-5">
         <div className="space-y-4">

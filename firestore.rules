@@ -1,0 +1,322 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Reusable Primitives ---
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isVerified() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isVerified() && (
+        request.auth.token.email == 'samucac3@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidUsername(u) {
+      return u is string && u.size() >= 3 && u.size() <= 40 && u.matches('^[a-zA-Z0-9_.-]+$');
+    }
+
+    // --- Validation Blueprints ---
+    function isValidUserProfile(data) {
+      return data.keys().hasAll([
+          'uid', 'email', 'displayName', 'username',
+          'passwordHash', 'passwordSalt', 'role', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'uid', 'email', 'displayName', 'username',
+          'passwordHash', 'passwordSalt', 'role', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.uid)
+        && data.email is string && data.email.size() >= 3 && data.email.size() <= 254
+        && data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 100
+        && isValidUsername(data.username)
+        && data.passwordHash is string && data.passwordHash.size() <= 128
+        && data.passwordSalt is string && data.passwordSalt.size() <= 64
+        && data.role in ['user', 'admin']
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidPlan(data) {
+      return data.keys().hasAll([
+          'id', 'name', 'daysOfUse', 'monthlyPriceBrl', 'totalPriceBrl',
+          'active', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'id', 'name', 'daysOfUse', 'monthlyPriceBrl', 'totalPriceBrl',
+          'active', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.id) && data.id.size() <= 64
+        && data.name is string && data.name.size() >= 2 && data.name.size() <= 60
+        && data.daysOfUse is number && data.daysOfUse >= 1 && data.daysOfUse <= 3650
+        && data.monthlyPriceBrl is number && data.monthlyPriceBrl >= 0 && data.monthlyPriceBrl <= 100000
+        && data.totalPriceBrl is number && data.totalPriceBrl >= 0 && data.totalPriceBrl <= 1000000
+        && data.active is bool
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidSubscription(data) {
+      return data.keys().hasAll([
+          'id', 'ownerUid', 'userEmail', 'username', 'passwordHash', 'passwordSalt',
+          'planName', 'daysOfUse', 'monthlyPriceBrl', 'totalPriceBrl',
+          'status', 'startsAt', 'expiresAt', 'createdBy', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'id', 'ownerUid', 'userEmail', 'username', 'passwordHash', 'passwordSalt',
+          'planName', 'daysOfUse', 'monthlyPriceBrl', 'totalPriceBrl',
+          'status', 'startsAt', 'expiresAt', 'createdBy', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.id)
+        && isValidId(data.ownerUid)
+        && data.userEmail is string && data.userEmail.size() >= 3 && data.userEmail.size() <= 254
+        && isValidUsername(data.username)
+        && data.passwordHash is string && data.passwordHash.size() <= 128
+        && data.passwordSalt is string && data.passwordSalt.size() <= 64
+        && data.planName is string && data.planName.size() >= 2 && data.planName.size() <= 60
+        && data.daysOfUse is number && data.daysOfUse >= 1 && data.daysOfUse <= 3650
+        && data.monthlyPriceBrl is number && data.monthlyPriceBrl >= 0 && data.monthlyPriceBrl <= 100000
+        && data.totalPriceBrl is number && data.totalPriceBrl >= 0 && data.totalPriceBrl <= 1000000
+        && data.status in ['active', 'expired', 'blocked']
+        && data.startsAt is timestamp
+        && data.expiresAt is timestamp
+        && data.expiresAt >= data.startsAt
+        && isValidId(data.createdBy)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidUserProxySettings(data) {
+      return data.keys().hasAll(['uid', 'updatedAt'])
+        && data.keys().hasOnly([
+          'uid', 'ip', 'port', 'autoStartBoot', 'autoSavePort', 'autoSaveIp',
+          'seeRequests', 'disableAutoUpdater', 'ignoreUpdateDay',
+          'customPs3Updatelist', 'manualPs3Updatelist', 'pathPs3Updatelist',
+          'customRulesUrls', 'whatsNewPsxPlaceNews', 'whatsNewRssFeed',
+          'whatsNewRssFeedUrl', 'psStorePsxPlaceNews', 'psStoreRssFeed',
+          'psStoreRssFeedUrl', 'tvVideoServicesPsxPlaceNews',
+          'tvVideoServicesRssFeed', 'tvVideoServicesRssFeedUrl',
+          'psxPlaceXmlUrl', 'updatedAt'
+        ])
+        && isValidId(data.uid)
+        && (!('ip' in data) || (data.ip is string && data.ip.size() <= 64))
+        && (!('port' in data) || (data.port is string && data.port.size() <= 10))
+        && (!('autoStartBoot' in data) || data.autoStartBoot is bool)
+        && (!('autoSavePort' in data) || data.autoSavePort is bool)
+        && (!('autoSaveIp' in data) || data.autoSaveIp is bool)
+        && (!('seeRequests' in data) || data.seeRequests is bool)
+        && (!('disableAutoUpdater' in data) || data.disableAutoUpdater is bool)
+        && (!('ignoreUpdateDay' in data) || (data.ignoreUpdateDay is string && data.ignoreUpdateDay.size() <= 16))
+        && (!('customPs3Updatelist' in data) || data.customPs3Updatelist is bool)
+        && (!('manualPs3Updatelist' in data) || data.manualPs3Updatelist is bool)
+        && (!('pathPs3Updatelist' in data) || (data.pathPs3Updatelist is string && data.pathPs3Updatelist.size() <= 512))
+        && (!('customRulesUrls' in data) || (data.customRulesUrls is string && data.customRulesUrls.size() <= 8192))
+        && (!('whatsNewPsxPlaceNews' in data) || data.whatsNewPsxPlaceNews is bool)
+        && (!('whatsNewRssFeed' in data) || data.whatsNewRssFeed is bool)
+        && (!('whatsNewRssFeedUrl' in data) || (data.whatsNewRssFeedUrl is string && data.whatsNewRssFeedUrl.size() <= 1024))
+        && (!('psStorePsxPlaceNews' in data) || data.psStorePsxPlaceNews is bool)
+        && (!('psStoreRssFeed' in data) || data.psStoreRssFeed is bool)
+        && (!('psStoreRssFeedUrl' in data) || (data.psStoreRssFeedUrl is string && data.psStoreRssFeedUrl.size() <= 1024))
+        && (!('tvVideoServicesPsxPlaceNews' in data) || data.tvVideoServicesPsxPlaceNews is bool)
+        && (!('tvVideoServicesRssFeed' in data) || data.tvVideoServicesRssFeed is bool)
+        && (!('tvVideoServicesRssFeedUrl' in data) || (data.tvVideoServicesRssFeedUrl is string && data.tvVideoServicesRssFeedUrl.size() <= 1024))
+        && (!('psxPlaceXmlUrl' in data) || (data.psxPlaceXmlUrl is string && data.psxPlaceXmlUrl.size() <= 1024))
+        && data.updatedAt is timestamp;
+    }
+
+    function isSubOwnerOrEmailMatch(subData) {
+      return isVerified() && (
+        subData.ownerUid == request.auth.uid ||
+        subData.userEmail.lower() == request.auth.token.email.lower()
+      );
+    }
+
+    // --- Collection: admins ---
+    match /admins/{adminId} {
+      allow get: if isValidId(adminId) && (isOwner(adminId) || isAdmin());
+      allow list, create, update, delete: if false;
+    }
+
+    // --- Collection: users ---
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin() || (isVerified() && existing().uid == request.auth.uid);
+
+      allow create: if isVerified()
+        && isValidId(userId)
+        && isValidUserProfile(incoming())
+        && incoming().uid == userId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (isOwner(userId) && incoming().role == 'user' && incoming().email.lower() == request.auth.token.email.lower())
+        );
+
+      allow update: if isVerified()
+        && isValidId(userId)
+        && isValidUserProfile(incoming())
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (
+            isOwner(userId)
+            && incoming().role == existing().role
+            && incoming().email == existing().email
+            && incoming().diff(existing()).affectedKeys().hasOnly([
+              'displayName', 'username', 'passwordHash', 'passwordSalt', 'updatedAt'
+            ])
+          )
+        );
+
+      allow delete: if isValidId(userId) && isAdmin();
+    }
+
+    // --- Collection: plans ---
+    match /plans/{planId} {
+      allow get: if isValidId(planId) && isVerified();
+      allow list: if isVerified() && (existing().active == true || isAdmin());
+
+      allow create: if isAdmin()
+        && isValidId(planId)
+        && isValidPlan(incoming())
+        && incoming().id == planId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isAdmin()
+        && isValidId(planId)
+        && isValidPlan(incoming())
+        && incoming().id == existing().id
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'name', 'daysOfUse', 'monthlyPriceBrl', 'totalPriceBrl', 'active', 'updatedAt'
+        ]);
+
+      allow delete: if isValidId(planId) && isAdmin();
+    }
+
+    // --- Collection: subscriptions ---
+    match /subscriptions/{subscriptionId} {
+      allow get: if isValidId(subscriptionId) && (isAdmin() || isSubOwnerOrEmailMatch(existing()));
+      allow list: if isAdmin() || isSubOwnerOrEmailMatch(existing());
+
+      allow create: if isVerified()
+        && isValidId(subscriptionId)
+        && isValidSubscription(incoming())
+        && incoming().id == subscriptionId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (
+            subscriptionId == request.auth.uid
+            && incoming().ownerUid == request.auth.uid
+            && incoming().userEmail.lower() == request.auth.token.email.lower()
+            && incoming().createdBy == request.auth.uid
+            && incoming().status == 'active'
+            && incoming().daysOfUse <= 3
+            && incoming().startsAt == request.time
+            && incoming().expiresAt <= request.time + duration.value(3, 'd')
+          )
+        );
+
+      allow update: if isVerified()
+        && isValidId(subscriptionId)
+        && isValidSubscription(incoming())
+        && incoming().id == existing().id
+        && incoming().createdAt == existing().createdAt
+        && incoming().createdBy == existing().createdBy
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (
+            // Action 1: Claim pre-created subscription by matching verified email
+            isSubOwnerOrEmailMatch(existing())
+            && existing().ownerUid == 'unclaimed'
+            && incoming().ownerUid == request.auth.uid
+            && incoming().diff(existing()).affectedKeys().hasOnly(['ownerUid', 'updatedAt'])
+          ) ||
+          (
+            // Action 2: Owner updates own username/passwordHash while subscription is active
+            isSubOwnerOrEmailMatch(existing())
+            && existing().status == 'active'
+            && incoming().diff(existing()).affectedKeys().hasOnly(['username', 'passwordHash', 'passwordSalt', 'updatedAt'])
+          ) ||
+          (
+            // Action 3: Auto-expire transition once request.time >= existing().expiresAt
+            isSubOwnerOrEmailMatch(existing())
+            && existing().status == 'active'
+            && request.time >= existing().expiresAt
+            && incoming().status == 'expired'
+            && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])
+          )
+        );
+
+      allow delete: if isValidId(subscriptionId) && isAdmin();
+    }
+
+    // --- Collection: userSettings ---
+    match /userSettings/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin() || (isVerified() && existing().uid == request.auth.uid);
+
+      allow create: if isVerified()
+        && isValidId(userId)
+        && isOwner(userId)
+        && isValidUserProxySettings(incoming())
+        && incoming().uid == userId
+        && incoming().updatedAt == request.time;
+
+      allow update: if isVerified()
+        && isValidId(userId)
+        && isOwner(userId)
+        && isValidUserProxySettings(incoming())
+        && incoming().uid == existing().uid
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'ip', 'port', 'autoStartBoot', 'autoSavePort', 'autoSaveIp',
+          'seeRequests', 'disableAutoUpdater', 'ignoreUpdateDay',
+          'customPs3Updatelist', 'manualPs3Updatelist', 'pathPs3Updatelist',
+          'customRulesUrls', 'whatsNewPsxPlaceNews', 'whatsNewRssFeed',
+          'whatsNewRssFeedUrl', 'psStorePsxPlaceNews', 'psStoreRssFeed',
+          'psStoreRssFeedUrl', 'tvVideoServicesPsxPlaceNews',
+          'tvVideoServicesRssFeed', 'tvVideoServicesRssFeedUrl',
+          'psxPlaceXmlUrl', 'updatedAt'
+        ]);
+
+      allow delete: if isValidId(userId) && (isOwner(userId) || isAdmin());
+    }
+  }
+}

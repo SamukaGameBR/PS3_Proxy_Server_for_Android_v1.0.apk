@@ -1,0 +1,321 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user profile and salted app credential hash.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "username": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 40,
+          "pattern": "^[a-zA-Z0-9_.-]+$"
+        },
+        "passwordHash": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "passwordSalt": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user", "admin"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "uid",
+        "email",
+        "displayName",
+        "username",
+        "passwordHash",
+        "passwordSalt",
+        "role",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SubscriptionPlan": {
+      "title": "SubscriptionPlan",
+      "description": "Subscription plan defining days of use and monthly price in BRL (Reais).",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60
+        },
+        "daysOfUse": {
+          "type": "number"
+        },
+        "monthlyPriceBrl": {
+          "type": "number"
+        },
+        "totalPriceBrl": {
+          "type": "number"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "daysOfUse",
+        "monthlyPriceBrl",
+        "totalPriceBrl",
+        "active",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "UserSubscription": {
+      "title": "UserSubscription",
+      "description": "User access credential, BRL monthly pricing, days of use, expiration date, and automatic lock status.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "ownerUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "userEmail": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "username": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 40,
+          "pattern": "^[a-zA-Z0-9_.-]+$"
+        },
+        "passwordHash": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "passwordSalt": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "planName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 60
+        },
+        "daysOfUse": {
+          "type": "number"
+        },
+        "monthlyPriceBrl": {
+          "type": "number"
+        },
+        "totalPriceBrl": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "expired", "blocked"]
+        },
+        "startsAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdBy": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "ownerUid",
+        "userEmail",
+        "username",
+        "passwordHash",
+        "passwordSalt",
+        "planName",
+        "daysOfUse",
+        "monthlyPriceBrl",
+        "totalPriceBrl",
+        "status",
+        "startsAt",
+        "expiresAt",
+        "createdBy",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "UserProxySettings": {
+      "title": "UserProxySettings",
+      "description": "Persisted proxy configuration and rules for the authenticated user.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "ip": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "port": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "autoStartBoot": {
+          "type": "boolean"
+        },
+        "autoSavePort": {
+          "type": "boolean"
+        },
+        "autoSaveIp": {
+          "type": "boolean"
+        },
+        "seeRequests": {
+          "type": "boolean"
+        },
+        "disableAutoUpdater": {
+          "type": "boolean"
+        },
+        "ignoreUpdateDay": {
+          "type": "string",
+          "maxLength": 16
+        },
+        "customPs3Updatelist": {
+          "type": "boolean"
+        },
+        "manualPs3Updatelist": {
+          "type": "boolean"
+        },
+        "pathPs3Updatelist": {
+          "type": "string",
+          "maxLength": 512
+        },
+        "customRulesUrls": {
+          "type": "string",
+          "maxLength": 8192
+        },
+        "whatsNewPsxPlaceNews": {
+          "type": "boolean"
+        },
+        "whatsNewRssFeed": {
+          "type": "boolean"
+        },
+        "whatsNewRssFeedUrl": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "psStorePsxPlaceNews": {
+          "type": "boolean"
+        },
+        "psStoreRssFeed": {
+          "type": "boolean"
+        },
+        "psStoreRssFeedUrl": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "tvVideoServicesPsxPlaceNews": {
+          "type": "boolean"
+        },
+        "tvVideoServicesRssFeed": {
+          "type": "boolean"
+        },
+        "tvVideoServicesRssFeedUrl": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "psxPlaceXmlUrl": {
+          "type": "string",
+          "maxLength": 1024
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Private user profile and credential hash owned by userId."
+    },
+    "/plans/{planId}": {
+      "schema": { "$ref": "#/entities/SubscriptionPlan" },
+      "description": "Catalog of subscription plans with days of use and monthly BRL prices."
+    },
+    "/subscriptions/{subscriptionId}": {
+      "schema": { "$ref": "#/entities/UserSubscription" },
+      "description": "User subscription records tracking username/password hash, days of use, BRL price, expiration, and automatic blocking."
+    },
+    "/userSettings/{userId}": {
+      "schema": { "$ref": "#/entities/UserProxySettings" },
+      "description": "Per-user persisted PS3 proxy settings and rules."
+    }
+  }
+}
