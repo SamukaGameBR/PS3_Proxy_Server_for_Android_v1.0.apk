@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { PWAInstallButton } from './PWAInstallButton';
 
 export interface ToolbarMenuItem {
   label: string;
@@ -42,7 +43,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <button
             type="button"
             onClick={onBack}
-            aria-label="Back"
+            aria-label="Voltar"
             className="mr-2 flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full hover:bg-white/15 active:bg-white/25"
           >
             <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current" aria-hidden="true">
@@ -53,12 +54,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <h1 className="truncate px-2 text-[20px] font-medium tracking-tight">{title}</h1>
       </div>
 
-      {menuItems.length > 0 && (
-        <div className="relative" ref={menuRef}>
-          <button
-            type="button"
-            onClick={() => setMenuOpen((prev) => !prev)}
-            aria-label="More options"
+      <div className="flex shrink-0 items-center">
+        <PWAInstallButton />
+        {menuItems.length > 0 && (
+          <div className="relative" ref={menuRef}>
+            <button
+              type="button"
+              onClick={() => setMenuOpen((prev) => !prev)}
+              aria-label="Mais opções"
             aria-expanded={menuOpen}
             className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full hover:bg-white/15 active:bg-white/25"
           >
@@ -84,8 +87,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               ))}
             </div>
           )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </header>
   );
 };

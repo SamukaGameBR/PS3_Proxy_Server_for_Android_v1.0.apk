@@ -45,6 +45,7 @@ import { AccessGateScreen } from './screens/AccessGateScreen';
 import { AccountScreen } from './screens/AccountScreen';
 import { AdminScreen } from './screens/AdminScreen';
 import { Toolbar } from './components/Toolbar';
+import { OfflineIndicator } from './components/OfflineIndicator';
 
 const STORAGE_KEY = 'ppsfa_app_settings';
 
@@ -921,6 +922,7 @@ export const App: React.FC = () => {
           </>
         )}
       </main>
+      <OfflineIndicator />
     </div>
   );
 };

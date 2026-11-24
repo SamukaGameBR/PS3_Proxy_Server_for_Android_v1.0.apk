@@ -155,26 +155,26 @@ export const MainScreen: React.FC<MainScreenProps> = ({
             type="button"
             disabled={busy}
             onClick={onToggleServer}
-            aria-label={status.running ? 'Stop server' : 'Start server'}
+            aria-label={status.running ? 'Parar servidor' : 'Iniciar servidor'}
             className="flex h-[83px] w-[127px] cursor-pointer items-center justify-center rounded-[2px] bg-[#D6D7D7] p-2 shadow-sm hover:bg-[#C8C9C9] active:bg-[#BDBDBD] disabled:opacity-60"
           >
             <img
               src={status.running ? '/assets/pause.png' : '/assets/play.png'}
-              alt={status.running ? 'Pause' : 'Play'}
+              alt={status.running ? 'Pausar' : 'Iniciar'}
               className="max-h-full max-w-full object-contain"
             />
           </button>
 
           <p className="mt-6 text-[36px] font-normal leading-tight text-[#212121]">
             {STRINGS.status}
-            {status.running ? 'ON' : 'OFF'}
+            {status.running ? STRINGS.statusOn : STRINGS.statusOff}
           </p>
           <p className="mt-3 text-[24px] text-[#212121]">
-            IP: {status.running ? status.ip : 'N/A'}
+            IP: {status.running ? status.ip : STRINGS.notAvailable}
           </p>
           <p className="mt-2 text-[24px] text-[#212121]">
             {STRINGS.port}
-            {status.running ? status.port : 'N/A'}
+            {status.running ? status.port : STRINGS.notAvailable}
           </p>
         </div>
 

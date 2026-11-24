@@ -359,7 +359,7 @@ export const AdminScreen: React.FC<AdminScreenProps> = ({
                           }}
                           className="cursor-pointer rounded bg-[#008A05] px-2.5 py-1 text-[12px] text-white"
                         >
-                          OK
+                          Salvar
                         </button>
                       </div>
                     )}

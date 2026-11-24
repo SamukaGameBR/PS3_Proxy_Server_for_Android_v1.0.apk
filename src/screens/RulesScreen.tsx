@@ -35,12 +35,12 @@ export const RulesScreen: React.FC<RulesScreenProps> = ({
         body: JSON.stringify({ filename: file.name, contentBase64 }),
       });
       if (!res.ok) {
-        throw new Error('Failed to upload file');
+        throw new Error('Falha ao enviar arquivo');
       }
       const data = (await res.json()) as { path: string };
       return data.path;
     } catch {
-      setUploadError('Failed to load selected file.');
+      setUploadError('Falha ao carregar o arquivo selecionado.');
       return null;
     }
   };

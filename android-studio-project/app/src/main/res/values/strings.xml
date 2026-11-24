@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Servidor Proxy PS3 para Android</string>
+    <string name="status_on">Status: LIGADO</string>
+    <string name="status_off">Status: DESLIGADO</string>
+    <string name="ip_label">Endereço IP:</string>
+    <string name="port_label">Porta:</string>
+    <string name="btn_start">Iniciar Proxy</string>
+    <string name="btn_stop">Parar Proxy</string>
+    <string name="btn_update_ip">Atualizar IP</string>
+    <string name="invalid_port">ERRO: Insira uma porta entre 1024 e 65535 (padrão 8080).</string>
+    <string name="logs_title">Logs em tempo real</string>
+    <string name="notif_channel">Servidor Proxy PS3</string>
+    <string name="notif_running">Servidor Proxy PS3 em execução</string>
+</resources>

@@ -28,7 +28,7 @@ export const LoginScreen: React.FC = () => {
       <div className="flex flex-1 flex-col items-center justify-center px-5 py-8 text-center text-[#212121]">
         <img
           src="/assets/main_old_icon_without_borders.png"
-          alt="PS3 Proxy Server"
+          alt="Servidor Proxy PS3"
           className="h-20 w-20 object-contain"
         />
         <h2 className="mt-4 text-[22px] font-medium text-[#212121]">

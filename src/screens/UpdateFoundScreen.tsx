@@ -24,7 +24,7 @@ export const UpdateFoundScreen: React.FC<UpdateFoundScreenProps> = ({
         key: `v-${idx}`,
         isVersion: true,
         isNew: line.includes('|NEW|'),
-        text: `Version ${parts[0]}`,
+        text: `Versão ${parts[0]}`,
       });
     } else if (line.includes('- ') && line.length > 2) {
       items.push({

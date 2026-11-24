@@ -219,7 +219,7 @@ class ProxyManager {
     this.activePort = config.port || 8080;
 
     if (this.activePort === PORT) {
-      this.lastError = `Port ${PORT} is reserved by the web UI server`;
+      this.lastError = `A porta ${PORT} é reservada pela interface web`;
       return { ok: false, error: this.lastError };
     }
 
@@ -228,7 +228,7 @@ class ProxyManager {
     const server = http.createServer(async (req, res) => {
       const rawUrl = req.url || '/';
       const fullUrl = rawUrl.startsWith('http') ? rawUrl : `http://${req.headers.host || 'localhost'}${rawUrl}`;
-      this.addLog(true, '[*]', `HTTP accessed -- ${fullUrl}`);
+      this.addLog(true, '[*]', `HTTP acessado -- ${fullUrl}`);
 
       try {
         const parsed = new URL(fullUrl);
@@ -243,17 +243,17 @@ class ProxyManager {
           if (region) {
             if (!config.manualPs3Updatelist) {
               const body = `# ${region.region}\r\nDest=${region.dest};ImageVersion=00000000;SystemSoftwareVersion=0.00;CDN=http://d${region.code}01.ps3.update.playstation.net/update/ps3/image/${region.code}/nodata;CDN_Timeout=30;`;
-              this.addLog(false, '[+]', 'PS3 ps3-updatelist.txt file redirected');
+              this.addLog(false, '[+]', 'Arquivo ps3-updatelist.txt do PS3 redirecionado');
               res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
               res.end(body);
               return;
             } else {
               const filePath = config.pathPs3Updatelist;
               if (!filePath || filePath === 'NONE' || !fs.existsSync(filePath)) {
-                this.addLog(false, '[/\\_\\]', '404 ERROR (File not found) on: PS3 update query redirected');
+                this.addLog(false, '[/\\_\\]', 'ERRO 404 (Arquivo não encontrado) em: Consulta de atualização do PS3 redirecionada');
                 res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
                 res.end(
-                  `<center><font size='6'>-----PS3 Proxy Server for Android-----</font><p><font size='5'>404 ERROR - File not found</font></p><p><font size='4'>Please check the file path inserted. File path inserted -- ${filePath}</font></p></center>`
+                  `<center><font size='6'>-----Servidor Proxy PS3 para Android-----</font><p><font size='5'>ERRO 404 - Arquivo não encontrado</font></p><p><font size='4'>Verifique o caminho do arquivo informado -- ${filePath}</font></p></center>`
                 );
                 return;
               }
@@ -262,7 +262,7 @@ class ProxyManager {
                 .replace(/\{\{\.Region\}\}/g, region.region)
                 .replace(/\{\{\.Dest\}\}/g, region.dest)
                 .replace(/\{\{\.Code\}\}/g, region.code);
-              this.addLog(false, '[+]', 'PS3 ps3-updatelist.txt file redirected');
+              this.addLog(false, '[+]', 'Arquivo ps3-updatelist.txt do PS3 redirecionado');
               res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
               res.end(templateText);
               return;
@@ -271,11 +271,11 @@ class ProxyManager {
             this.addLog(
               false,
               '[/\\_\\]',
-              'WARNING - There was an error analizing your region. The PS3 update query will NOT be redirected.'
+              'AVISO - Erro ao analisar sua região. A consulta de atualização do PS3 NÃO será redirecionada.'
             );
             res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
             res.end(
-              `<center><font size='6'>-----PS3 Proxy Server for Android-----</font><p><font size='5'>WARNING - There was an error analizing your region</font></p><p><font size='4'>The PS3 update query will NOT be redirected.</font></p></center>`
+              `<center><font size='6'>-----Servidor Proxy PS3 para Android-----</font><p><font size='5'>AVISO - Erro ao analisar sua região</font></p><p><font size='4'>A consulta de atualização do PS3 NÃO será redirecionada.</font></p></center>`
             );
             return;
           }
@@ -289,11 +289,11 @@ class ProxyManager {
               this.addLog(
                 false,
                 '[/\\_\\]',
-                `404 ERROR (File not found) on: Custom URLs -- Original URL: ${rule.sourceUrl} || Redirected to: ${rule.targetPath}`
+                `ERRO 404 (Arquivo não encontrado) em: URLs personalizadas -- URL Original: ${rule.sourceUrl} || Redirecionado para: ${rule.targetPath}`
               );
               res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
               res.end(
-                `<center><font size='6'>-----PS3 Proxy Server for Android-----</font><p><font size='5'>404 ERROR - File not found</font></p><p><font size='4'>Please check the file path inserted. File path inserted -- ${rule.targetPath}</font></p></center>`
+                `<center><font size='6'>-----Servidor Proxy PS3 para Android-----</font><p><font size='5'>ERRO 404 - Arquivo não encontrado</font></p><p><font size='4'>Verifique o caminho do arquivo informado -- ${rule.targetPath}</font></p></center>`
               );
               return;
             }
@@ -301,7 +301,7 @@ class ProxyManager {
             this.addLog(
               false,
               '[-]',
-              `Custom URLs -- Original URL: ${rule.sourceUrl} || Redirected to: ${rule.targetPath}`
+              `URLs personalizadas -- URL Original: ${rule.sourceUrl} || Redirecionado para: ${rule.targetPath}`
             );
             res.writeHead(200, { 'Content-Type': 'application/octet-stream' });
             res.end(fileData);
@@ -388,7 +388,7 @@ class ProxyManager {
               this.addLog(
                 false,
                 '[/]',
-                `${typeRedirect} picture redirected -- Original URL: ${fullUrl} || Redirected to: ${redirectedPic}`
+                `Imagem (${typeRedirect}) redirecionada -- URL Original: ${fullUrl} || Redirecionado para: ${redirectedPic}`
               );
             }
           }
@@ -415,14 +415,14 @@ class ProxyManager {
 
         proxyReq.on('error', (err) => {
           if (!res.headersSent) {
-            res.writeHead(502, { 'Content-Type': 'text/plain' });
-            res.end(`Proxy error: ${err.message}`);
+            res.writeHead(502, { 'Content-Type': 'text/plain; charset=utf-8' });
+            res.end(`Erro no proxy: ${err.message}`);
           }
         });
 
         req.pipe(proxyReq);
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Proxy error';
+        const message = err instanceof Error ? err.message : 'Erro no proxy';
         if (!res.headersSent) {
           res.writeHead(500, { 'Content-Type': 'text/plain' });
           res.end(message);
@@ -433,7 +433,7 @@ class ProxyManager {
     server.on('connect', (req, clientSocket, head) => {
       const [host, portStr] = (req.url || '').split(':');
       const targetPort = Number(portStr) || 443;
-      this.addLog(true, '[*]', `HTTPS accessed -- https://${req.url}`);
+      this.addLog(true, '[*]', `HTTPS acessado -- https://${req.url}`);
 
       const serverSocket = net.connect(targetPort, host, () => {
         clientSocket.write('HTTP/1.1 200 Connection Established\r\nProxy-agent: PS3-Proxy-Server\r\n\r\n');
@@ -459,7 +459,7 @@ class ProxyManager {
         this.running = false;
         this.server = null;
         this.lastError = err.message;
-        this.addLog(false, '[/\\_\\ ERROR /_\\]', `Interrupted PS3 Proxy Server at ${this.activeIp}:${this.activePort}`);
+        this.addLog(false, '[/\\_\\ ERRO /_\\]', `Servidor Proxy PS3 interrompido em ${this.activeIp}:${this.activePort}`);
         resolve({ ok: false, error: err.message });
       };
 
@@ -468,11 +468,11 @@ class ProxyManager {
         server.removeListener('error', onError);
         server.on('error', (err) => {
           this.lastError = err.message;
-          this.addLog(false, '[/\\_\\ ERROR /_\\]', `Interrupted PS3 Proxy Server at ${this.activeIp}:${this.activePort}`);
+          this.addLog(false, '[/\\_\\ ERRO /_\\]', `Servidor Proxy PS3 interrompido em ${this.activeIp}:${this.activePort}`);
         });
         this.server = server;
         this.running = true;
-        this.addLog(false, '[*]', `Started PS3 Proxy Server at ${this.activeIp}:${this.activePort}`);
+        this.addLog(false, '[*]', `Servidor Proxy PS3 iniciado em ${this.activeIp}:${this.activePort}`);
         resolve({ ok: true });
       });
     });
@@ -489,7 +489,7 @@ class ProxyManager {
     await new Promise<void>((resolve) => {
       srv.close(() => resolve());
     });
-    this.addLog(false, '[!]', `Stopped PS3 Proxy Server at ${this.activeIp}:${this.activePort}`);
+    this.addLog(false, '[!]', `Servidor Proxy PS3 parado em ${this.activeIp}:${this.activePort}`);
   }
 }
 
@@ -547,7 +547,7 @@ async function startApp() {
     try {
       const { filename, contentBase64 } = req.body as { filename?: string; contentBase64?: string };
       if (!filename || typeof contentBase64 !== 'string') {
-        return res.status(400).json({ error: 'Missing filename or contentBase64' });
+        return res.status(400).json({ error: 'Nome do arquivo ou conteúdo ausente' });
       }
       const safeName = path.basename(filename).replace(/[^a-zA-Z0-9._-]/g, '_');
       const targetPath = path.join(UPLOADS_DIR, safeName);
@@ -555,7 +555,7 @@ async function startApp() {
       await fs.promises.writeFile(targetPath, buffer);
       res.json({ path: targetPath });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Upload failed';
+      const message = err instanceof Error ? err.message : 'Falha no envio';
       res.status(500).json({ error: message });
     }
   });
@@ -579,7 +579,7 @@ async function startApp() {
         updatesTxt = await fs.promises.readFile(localUpdatesPath, 'utf-8');
       }
       if (!updatesTxt) {
-        return res.status(502).json({ error: 'Failed to load updates' });
+        return res.status(502).json({ error: 'Falha ao carregar atualizações' });
       }
 
       let updateFound = false;
@@ -614,7 +614,7 @@ async function startApp() {
         currentVersion: APP_VERSION.toFixed(1),
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Update check failed';
+      const message = err instanceof Error ? err.message : 'Falha ao verificar atualizações';
       res.status(500).json({ error: message });
     }
   });
