@@ -1,0 +1,5 @@
+{
+  "name": "PS3 Proxy Server for Android",
+  "description": "PS3 Proxy server with firmware spoof (ps3-updatelist.txt redirection), custom URL redirection rules, XMB picture redirection, and real-time logging.",
+  "requestFramePermissions": []
+}

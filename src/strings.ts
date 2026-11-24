@@ -1,0 +1,87 @@
+export const STRINGS = {
+  appName: 'PS3 Proxy Server for Android',
+  status: 'Status: ',
+  enterPort: 'Insert the chosen port...',
+  enterIp: 'Insert the chosen IP...',
+  port: 'Port: ',
+  credits: 'Credits',
+  creditsMenu: 'Credits, WARNING and bugs and ideas',
+  credits1: '- Edw590 (GitHub) - for making the app;',
+  credits2: '- blckbear_ (PSX-Place) - for helping, testing and giving ideas (so huge credits for him);',
+  credits3:
+    "- mondul (GitHub/PSX-Place) - for making the program which is behind the app (so amazing credits for him or the app wouldn't be possible, at least so easily);",
+  credits4:
+    'The original program used in the app (now heavily modified) can be found on GitHub: https://github.com/mondul/PS3-Proxy.',
+  credits5: 'WARNING',
+  credits6: 'This app only works on Android 4.0.3 or newer (I tried to lower as much as I could)!',
+  credits7:
+    'So, if you need the server to work with Android 4.0 and older (being the minimum, Android 2.2, so lower than 2.2 there is no known way), please follow this tutorial, which was made by the same person who helped in this app:',
+  credits8: 'https://www.psx-place.com/threads/tutorial-how-to-set-up-ps3-proxy-server-on-android.22846/',
+  credits9: 'Bugs and ideas',
+  credits10:
+    "If you found a bug with the app or you have something in mind that you'd like to see here (or just want to check for an update), please tell me in this thread (official thread):",
+  credits11: 'https://www.psx-place.com/resources/ps3-proxy-server-for-android.795/',
+  settings: 'Settings',
+  autoStart: 'Auto start the server at device boot',
+  autoSavePort: 'Auto save the chosen port',
+  autoSaveIp: 'Auto save the chosen IP',
+  visitWebsite: 'Visit website',
+  invalidPort: 'ERROR: Please insert a port between 1024 and 65535 (the default port is 8080).',
+  chooseFile: 'Choose file',
+  autoGenerateFile: 'Manually write ps3-updatelist.txt file',
+  updateIp: 'Update IP',
+  chosenFile: 'Chosen file path: ',
+  newUpdate: 'New app version available!',
+  changelog: 'Changelog',
+  pleaseWaitChangelog: 'Please wait... The changelog is being processed.',
+  downloadInstallUpdate: 'Download and install',
+  ignoreADay: 'Ignore for a day',
+  disableAutoUpdater: 'Disable the updates notifier (not recommended)',
+  checkUpdatesManually: 'Manually check for updates',
+  updateNotFound: 'No updates available',
+  updateNotFoundError: 'Error while searching for updates',
+  instructions: 'Instructions',
+  instructionsOnPs3: 'On the PS3:',
+  instructions01:
+    "''On your PS3, select Settings ➡ Network Settings ➡ Internet Connection Settings, press ✖ to continue, select Custom method and continue until you get the Proxy Server screen. Choose Use, continue, enter the IP address you got from the app and continue until you reach the save settings page. press ✖ to save settings and press it again if you want to test the connection. You should now be able to connect to PSN.'' (from mondul's PS3-Proxy GitHub page, modified)",
+  instructionsOnApp: 'On the app:',
+  instructions02: 'Explanations about some of the app features:',
+  instructions03:
+    "- Disable the updates notifier (not recommended, as you'll miss possible updates, unless you manually check for them from time to time).",
+  instructions04:
+    "- Manually write ps3-updatelist.txt file, if for some reason the automatic one doesn't work for you (please tell me if it doesn't, might be a region issue - or not, and just write your own file);",
+  instructions05:
+    "- The IP is automatic when you start the app. If you have the server running and the IP has been changed (for example, a network change), just click Update IP and it will restart the server with the new IP you have. If the IP didn't change and you clicked Update IP, nothing will happen. The same applies to the notification that will come up when there is an IP change. Click on it to restart the server with the new IP. On boot, if the IP changes (for example, if the device takes some time to start WiFi), it will automatically restart without asking, but only on the boot startup.",
+  instructions06:
+    "- About pictures redirection. As a start, all of this was part of the idea of redirecting What's New XML to PSX-Place's news like DeViL303 did in CFW - thanks to DeViL for letting me use the XML to redirect the news. But the original XML is in HTTPS, so it would probably work in CFW, but not on HAN or pure OFW, so only the pictures will be redirected. ATTENTION - If you enable both What's New and PS Store icon redirection, What's New URL will be used and both will be redirected to the same pictures (this because in some countries, What's New and PS Store icon have the same pictures, so they are all redirected at once). So either enable one or the other, or enable both to have the pictures in both places. You can also redirect to RSS feeds, like YouTube channels feeds (search on Google for that, Google's your friend haha), websites RSS feeds, any feed you like that has pictures. ",
+  instructions07:
+    '- Custom URL redirection rules will only work for HTTP URLs. HTTPS is safer (S = Secure) and seems not to be possible.',
+  instructions08:
+    "- The logs checker is not automatic. It's manual, and it analyzes the phone's logs looking for the presence of server logs. Thus, as the phone won't keep the logs forever, it will start deleting them after some time (I don't know the time it takes to delete them), and if you didn't check the logs, some will be missing because they're already deleted from the phone logs. Though, once you check the logs, they will be saved until you start the server again. You can also save the logs in an HTML file in your phone storage, though this needs the app to request for access phone files permission.",
+  instructions09:
+    "- When there's a new update, every time you start the app, the notifier will warn you about a new update. You can choose to disable the notification for a day, clicking on Ignore on the bottom of the screen. If you click Back, the notification will not be disabled and will keep showing. In the updates screen, it's now possible to install the update automatically (optional, the update can be downloaded and installed manually if you refuse the permission or stop the download). This stores the update installer in a folder called PPSFA_updates_delete_this_please in the root of your external storage directory. You can delete that folder after the app has been updated, as it will be consuming space.",
+  instructions10:
+    "- I'm sorry about the translations having been reduced to English, Portuguese and Spanish, but I don't have that much time to be translating to some many languages and it's even with Google Translate, so the translations were not even that good.",
+  howToUse: 'How to use',
+  errorIp: 'Probably the entered IP address is not correct',
+  officialPs3Updatelist: 'Use official ps3-updatelist.txt file',
+  realtimeLogs: 'Real-time logging',
+  rules: 'Rules',
+  whatsNewPsxPlaceNews: "Redirect What's New pictures to PSX-Place's news pictures",
+  psStorePsxPlaceNews: "Redirect PS Store icon pictures to PSX-Place's news pictures",
+  tvVideoServicesPsxPlaceNews: "Redirect TV/Video Services pictures to PSX-Place's news pictures",
+  whatsNewRssFeed: "Redirect What's New pictures to all pictures present on an RSS Feed",
+  psStoreRssFeed: 'Redirect PS Store pictures to all pictures present on an RSS Feed',
+  tvVideoServicesRssFeed: 'Redirect TV/Video Services pictures to all pictures present on an RSS Feed',
+  whatsNewRssFeedUrl: "What's New RSS feed URL",
+  psStoreRssFeedUrl: 'PS Store icon RSS feed URL',
+  tvVideoServicesRssFeedUrl: 'TV/Video Services RSS feed URL',
+  customRules:
+    "Bellow, insert custom rules for the server. To redirect an URL to a file, please do as the follwing: URL --> File_path. Every redirect rule must be on a single line. So, to add more, just press ENTER and add another rule. Insert the exact URL you want and then select Choose File and the following will be added to the end of the edit text area: ' --> /path/to/chosen.file'. Don't add more than the 2 spaces shown above (one space before and another one after the arrow). Do exactly as shown or it won't work.",
+  customRedirectionRules: 'Custom URL redirection rules',
+  saveLogs: 'Save logs to PPSFA_Logsfile.html',
+  saveLogsSucceeded: 'File saved to the selected location',
+  updatePort: 'Update port',
+  seeRequests: 'See accessed HTTP URLs and HTTPS hosts in the logs',
+  checkLogs: 'Check logs',
+} as const;
